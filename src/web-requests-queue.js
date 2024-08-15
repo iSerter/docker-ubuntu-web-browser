@@ -2,7 +2,9 @@ const redis = require('redis');
 const crypto = require('crypto');
 
 class WebRequestsQueue {
-  constructor() {
+
+  constructor(queueCount = 3) {
+    this.queueCount = queueCount;
     this.client = redis.createClient();
     this.client.on('error', (err) => {
       console.error('Redis error:', err);
@@ -18,12 +20,23 @@ class WebRequestsQueue {
     await this.client.connect();
   }
 
+  getQueueName(queueNo = 1) {
+    return `requestsQueue${queueNo}`;
+  }
+
+  getQueueNumberForRequest(requestId) {
+    const lastChar = requestId[requestId.length - 1];
+    const lastCharNumber = parseInt(lastChar, 16);
+    return lastCharNumber % this.queueCount + 1;
+  }
+
   async pushRequest(request) {
     const reqHashId = crypto.createHash('md5').update(JSON.stringify(request)).digest('hex');
     const requestId = `request:${Date.now()}:${reqHashId}`;
+    const queueNumber = this.getQueueNumberForRequest(requestId);
   
     try {
-      await this.client.lPush('requestsQueue', requestId);
+      await this.client.lPush(this.getQueueName(queueNumber), requestId);
   
       await this.client.hSet(requestId, 'config', JSON.stringify(request));
       await this.client.hSet(requestId, 'status', 0);
@@ -43,9 +56,9 @@ class WebRequestsQueue {
     return this.client.hSet(requestId, 'result', JSON.stringify(result));
   }
 
-  async getRequests() {
+  async getRequests(queueNumber = 1) {
     try {
-      const requestIds = await this.client.lRange('requestsQueue', 0, -1);
+      const requestIds = await this.client.lRange(this.getQueueName(queueNumber), 0, -1);
   
       const requests = requestIds.map(async (requestId) => {
         const config = await this.client.hGet(requestId, 'config');
@@ -71,7 +84,7 @@ class WebRequestsQueue {
     await this.client.hDel(requestId, 'config');
     await this.client.hDel(requestId, 'status');
     await this.client.hDel(requestId, 'result');
-    await this.client.lRem('requestsQueue', 0, requestId); 
+    await this.client.lRem(this.getQueueName(this.getQueueNumberForRequest(requestId)), 0, requestId); 
     return true;
   }
 }

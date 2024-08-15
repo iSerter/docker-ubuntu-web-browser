@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: my-web-browsers
+    platform: linux/amd64
+    volumes:
+      - .:/home/app
+    ports:
+      - "3030:3030"
+    environment:
+      - LANG=en_US.UTF-8
+    command: service dbus start && service redis-server start && su - app -c "pm2-runtime start ecosystem.config.js"

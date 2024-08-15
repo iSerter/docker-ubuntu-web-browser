@@ -38,10 +38,12 @@ const startSession = ({ args = [], customConfig = {}, proxy = {} }) => {
       }
 
       const chromeFlags = [
+        "--no-first-run",
         "--no-sandbox",
         "--disable-setuid-sandbox",
         "--disable-blink-features=AutomationControlled",
-        "--disable-dev-shm-usage",
+        "--disable-dev-shm-usage", // need for switching some processes from memory to filesystem
+        // "--ignore-certificate-errors",
         "--window-size=1920,1080",
       ].concat(args);
 
@@ -59,10 +61,11 @@ const startSession = ({ args = [], customConfig = {}, proxy = {} }) => {
         executablePath: chromePath,
         args: chromeFlags,
         dumpio: true,
-        timeout: 15, // needed for strange bug. https://github.com/puppeteer/puppeteer/issues/10556#issuecomment-1681602191
+        timeout: 10000, // needed for strange bug. https://github.com/puppeteer/puppeteer/issues/10556#issuecomment-1681602191
         env: {
             DISPLAY: xvfbSession._display
         },
+        // ignoreDefaultArgs: ['--disable-extensions'], // Disable file watcher
         ...customConfig,
       });
 

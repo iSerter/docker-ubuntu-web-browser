@@ -1,11 +1,12 @@
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const WebRequestsQueue = require('./web-requests-queue');
 
 const app = express();
-const port = 3030;
-const queue = new WebRequestsQueue();
+const port = process.env.API_PORT || 3030;
+const queue = new WebRequestsQueue(process.env.QUEUE_COUNT || 2);
 
 app.use(bodyParser.json({ limit: "50mb" }));
 app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));

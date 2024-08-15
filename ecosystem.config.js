@@ -6,8 +6,8 @@ module.exports = {
         watch: true,
       },
       {
-        name: 'browser-service',
-        script: './src/browser-service.js',
+        name: 'queue-workers',
+        script: './src/queue-workers.js',
         watch: true,
       },
     ],
