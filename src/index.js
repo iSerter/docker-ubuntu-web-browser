@@ -4,15 +4,15 @@ const bodyParser = require('body-parser');
 const WebRequestsQueue = require('./web-requests-queue');
 
 const app = express();
-const port = 3000;
+const port = 3030;
 const queue = new WebRequestsQueue();
-await queue.start();
 
 app.use(bodyParser.json({ limit: "50mb" }));
 app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 app.use(cors());
 
-app.listen(port, () => {
+app.listen(port, async () => {
+  await queue.start();
   console.log(`Server running on port ${port}`);
 });
 
@@ -42,11 +42,11 @@ app.post("/browse", async (req, res) => {
 
   await queue.deleteRequest(requestId);
 
-  if (status === 0) {
+  if (status == 0) {
     return res.status(504).json({ code: 504, message: 'Request timeout' });
   }
 
-  if (status === 1) {
+  if (status == 1) {
     return res.status(200).json(result);
   }
 });

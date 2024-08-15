@@ -1,4 +1,5 @@
-FROM ubuntu:24.04
+# Chrome-stable has issues with Ubuntu 24.04, so we are using 22.04
+FROM --platform=linux/amd64 ubuntu:22.04
 
 # Install core dependencies
 RUN apt-get update && apt-get install -y \
@@ -15,6 +16,15 @@ RUN apt-get update && apt-get install -y \
 # Install redis-server
 RUN apt-get update && apt-get install -y redis-server
 
+# Install Google Chrome Stable and fonts
+# Note: this installs the necessary libs to make the browser work with Puppeteer.
+RUN apt-get update && apt-get install gnupg wget -y && \
+    wget --quiet --output-document=- https://dl-ssl.google.com/linux/linux_signing_key.pub | gpg --dearmor > /etc/apt/trusted.gpg.d/google-archive.gpg && \
+    sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list'
+RUN apt-get update && \
+    apt-get install google-chrome-stable -y --no-install-recommends && \
+    rm -rf /var/lib/apt/lists/*
+
 # Install Node 22, https://github.com/nodesource/distributions?tab=readme-ov-file#installation-instructions-deb
 RUN curl -fsSL https://deb.nodesource.com/setup_22.x -o nodesource_setup.sh
 RUN sudo -E bash nodesource_setup.sh
@@ -22,6 +32,9 @@ RUN sudo apt-get install -y nodejs
 
 # Install PM2 globally
 RUN npm install -g pm2
+
+# Install Puppeteer globally
+RUN npm install -g puppeteer
 
 # Set up the working directory
 WORKDIR /app
@@ -39,4 +52,4 @@ COPY . .
 EXPOSE 3030
 
 # Start the application
-CMD ["pm2-runtime", "start", "ecosystem.config.js"]
+CMD service redis-server start && pm2-runtime start ecosystem.config.js

@@ -5,6 +5,7 @@ const handleRequests = async () => {
   const queue = new WebRequestsQueue();
   await queue.start();
   const { browser, xvfbSession } = await startSession({});
+  console.log('New browser \w display session started: ', xvfbSession._display, browser.wsEndpoint());
 
 //   const reqId = await queue.pushRequest({url: "http://iserter.com"});
 //   console.log(reqId);
@@ -22,8 +23,10 @@ const handleRequests = async () => {
   while (true) {
     try {
       const requests = await queue.getRequests();
+      console.log('Requests:', requests.length);
       for (const request of requests) {
-        if (request.status == '0') {
+        if (request.status == 0) {
+          console.log('Processing request:', request.id, request?.config?.url);
           // Process the request
           const page = await browser.newPage();
           await page.goto(request.data.url);

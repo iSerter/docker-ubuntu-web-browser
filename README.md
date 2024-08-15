@@ -11,23 +11,34 @@ A basic setup for my web browser experiments.
 
 To build the Docker image, navigate to the directory containing the `Dockerfile` and run the following command:
 
+If on MacOS, run `export DOCKER_DEFAULT_PLATFORM=linux/amd64` first. 
+
 ```sh
-docker build -t ubuntu-web-browser .
+docker build -t ubuntu-web-browser . 
+```
+OR
+```sh
+docker buildx build --platform linux/amd64 -t ubuntu-web-browser . 
 ```
 
 ### Run a container 
 ```sh
 docker run -d -p 3030:3030 --name web-browser ubuntu-web-browser
 ```
+May need to add ` --shm-size=1gb` for chrome. 
+
+### Go inside
+```sh
+docker exec -it web-browser /bin/bash
+```
 
 ### Use / Test
+```
+curl http://127.0.0.1:3030/
+```
+
 ```sh
-curl -X POST http://127.0.0.1:3030/browse \
-  -H "Content-Type: application/json" \
-  -d '{
-    "url": "https://iserter.com",
-    "method": "GET"
-  }'
+curl -X POST http://127.0.0.1:3030/browse -d '{"url": "https://iserter.com/"}'
 ```
 
 

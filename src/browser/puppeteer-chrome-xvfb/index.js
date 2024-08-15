@@ -27,10 +27,21 @@ const startSession = ({ args = [], customConfig = {}, proxy = {} }) => {
         console.error("Error starting Xvfb", err);
       }
 
+        // Verify chromePath
+      if (!chromePath) {
+        throw new Error("Chrome path is not defined");
+      }
+
+      // Verify xvfbSession
+      if (!xvfbSession || !xvfbSession._display) {
+        throw new Error("xvfbSession is not properly configured");
+      }
+
       const chromeFlags = [
         "--no-sandbox",
         "--disable-setuid-sandbox",
         "--disable-blink-features=AutomationControlled",
+        "--disable-dev-shm-usage",
         "--window-size=1920,1080",
       ].concat(args);
 
@@ -38,10 +49,17 @@ const startSession = ({ args = [], customConfig = {}, proxy = {} }) => {
         chromeFlags.push(`--proxy-server=${proxy.host}:${proxy.port}`);
       }
 
+      console.log("Launching browser with the following configuration:");
+      console.log(`chromePath: ${chromePath}`);
+      console.log(`chromeFlags: ${chromeFlags.join(' ')}`);
+      console.log(`DISPLAY: ${xvfbSession._display}`);    
+
       const browser = await puppeteer.launch({
         headless: false,
         executablePath: chromePath,
         args: chromeFlags,
+        dumpio: true,
+        timeout: 15, // needed for strange bug. https://github.com/puppeteer/puppeteer/issues/10556#issuecomment-1681602191
         env: {
             DISPLAY: xvfbSession._display
         },
