@@ -4,7 +4,7 @@ const WebRequestsQueue = require('./web-requests-queue.js');
 const handleRequests = async () => {
   const queue = new WebRequestsQueue();
   await queue.start();
-//   const { browser, xvfbSession } = await startSession({});
+  const { browser, xvfbSession } = await startSession({});
 
 //   const reqId = await queue.pushRequest({url: "http://iserter.com"});
 //   console.log(reqId);
@@ -17,7 +17,6 @@ const handleRequests = async () => {
 //   console.log(await queue.getRequestStatus(reqId), await queue.getRequestResult(reqId));
 //   console.log(await queue.getRequests());
 
-
 //   return;
 
   while (true) {
@@ -29,8 +28,8 @@ const handleRequests = async () => {
           const page = await browser.newPage();
           await page.goto(request.data.url);
           const result = await page.content();
-          queue.updateRequestResult(request.id, result);
-          queue.updateRequestStatus(request.id, 1);
+          await queue.updateRequestResult(request.id, result);
+          await queue.updateRequestStatus(request.id, 1);
           await page.close();
         }
       }
