@@ -11,11 +11,13 @@ const stopSession = async (xvfbSession) => {
 const startSession = ({ args = [], customConfig = {}, proxy = {} }) => {
   return new Promise(async (resolve, reject) => {
     try {
-      var xvfbSession = null;
-      var chromePath =
+      let xvfbSession = null;
+      let chromePath =
         customConfig.executablePath ||
         customConfig.chromePath ||
         puppeteer.executablePath();
+
+      // chromePath = '/usr/bin/google-chrome';
 
       try {
         var xvfbSession = new Xvfb({
@@ -42,8 +44,8 @@ const startSession = ({ args = [], customConfig = {}, proxy = {} }) => {
         "--no-sandbox",
         "--disable-setuid-sandbox",
         "--disable-blink-features=AutomationControlled",
-        "--disable-dev-shm-usage", // need for switching some processes from memory to filesystem
-        // "--ignore-certificate-errors",
+        "--disable-dev-shm-usage", // needed for switching some processes from memory to filesystem
+        "--ignore-certificate-errors",
         "--window-size=1920,1080",
       ].concat(args);
 
@@ -61,7 +63,7 @@ const startSession = ({ args = [], customConfig = {}, proxy = {} }) => {
         executablePath: chromePath,
         args: chromeFlags,
         dumpio: true,
-        timeout: 10000, // needed for strange bug. https://github.com/puppeteer/puppeteer/issues/10556#issuecomment-1681602191
+        timeout: 8000, // needed for strange bug. https://github.com/puppeteer/puppeteer/issues/10556#issuecomment-1681602191
         env: {
             DISPLAY: xvfbSession._display
         },

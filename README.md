@@ -18,7 +18,7 @@ docker buildx build --platform linux/amd64 -t web-browsers .
 
 ### Run a container 
 ```sh
-docker run --platform linux/amd64 -d -p 3030:3030 --name my-web-browsers web-browsers
+docker run --cap-add=SYS_ADMIN --platform linux/amd64 -d -p 3030:3030 --name my-web-browsers web-browsers
 ```
 May need to add ` --shm-size=1gb` for chrome. 
 
