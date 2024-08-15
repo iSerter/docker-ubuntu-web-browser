@@ -12,14 +12,16 @@ RUN apt-get update && apt-get install -y \
     xvfb \
     && rm -rf /var/lib/apt/lists/*
 
-# Set up the display
-ENV DISPLAY :99
+# Install redis-server
+RUN apt-get update && apt-get install -y redis-server
 
 # Install Node 22, https://github.com/nodesource/distributions?tab=readme-ov-file#installation-instructions-deb
 RUN curl -fsSL https://deb.nodesource.com/setup_22.x -o nodesource_setup.sh
 RUN sudo -E bash nodesource_setup.sh
 RUN sudo apt-get install -y nodejs
 
+# Install PM2 globally
+RUN npm install -g pm2
 
 # Set up the working directory
 WORKDIR /app
@@ -37,4 +39,4 @@ COPY . .
 EXPOSE 3030
 
 # Start the application
-CMD ["npm", "start"]
+CMD ["pm2-runtime", "start", "ecosystem.config.js"]

@@ -4,7 +4,8 @@
   "description": "for my web browser experiments.",
   "main": "index.js",
   "scripts": {
-    "start": "node ./src/index.js"
+    "start": "node ./src/index.js",
+    "start:browser-service": "node ./src/browser-service.js"
   },
   "keywords": [],
   "author": "",
@@ -25,6 +26,8 @@
     "puppeteer-extra-plugin-adblocker": "^2.13.6",
     "puppeteer-extra-plugin-block-resources": "^2.4.3",
     "puppeteer-extra-plugin-recaptcha": "^3.6.8",
-    "puppeteer-extra-plugin-stealth": "^2.11.2"
+    "puppeteer-extra-plugin-stealth": "^2.11.2",
+    "redis": "^4.7.0",
+    "xvfb": "^0.4.0"
   }
 }

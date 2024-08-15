@@ -1,14 +1,14 @@
-import Xvfb from "xvfb";
-import puppeteer from "puppeteer";
+const Xvfb = require("xvfb");
+const puppeteer = require("puppeteer");
 
-export const stopSession = async (xvfbSession) => {
+const stopSession = async (xvfbSession) => {
   try {
     xvfbSession && xvfbSession.stopSync();
   } catch (err) {}
   return true;
 };
 
-export const startSession = ({ args = [], customConfig = {}, proxy = {} }) => {
+const startSession = ({ args = [], customConfig = {}, proxy = {} }) => {
   return new Promise(async (resolve, reject) => {
     try {
       var xvfbSession = null;
@@ -62,4 +62,9 @@ export const startSession = ({ args = [], customConfig = {}, proxy = {} }) => {
       throw new Error(err.message);
     }
   });
+};
+
+module.exports = {
+    stopSession,
+    startSession,
 };
