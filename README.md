@@ -7,27 +7,19 @@ A basic setup for my web browser experiments. Starting with Puppeteer first.
 - - it checks the request status every 70ms with a 30s timeout.
 
 
-### Building the Docker Image
+## Usage
 
-/!\ On MacOS, use Colima to run docker. https://stackoverflow.com/a/75047502
-
+### Launch a container
 
 ```sh
-docker buildx build --platform linux/amd64 -t web-browsers . 
+docker-compose --profile debian up
 ```
-
-### Run a container 
+ or 
 ```sh
-docker run --cap-add=SYS_ADMIN --platform linux/amd64 -d -p 3030:3030 --name my-web-browsers web-browsers
-```
-May need to add ` --shm-size=1gb` for chrome. 
+docker-compose --profile macos up
+``` 
+depending on your host system.
 
-### Go inside
-```sh
-docker exec -it my-web-browsers /bin/bash
-```
-
-### Usage
 
 ```sh
 curl -X POST http://127.0.0.1:3030/browse -d '{"url": "https://iserter.com/"}'
@@ -35,25 +27,3 @@ curl -X POST http://127.0.0.1:3030/browse -d '{"url": "https://iserter.com/"}'
 
 For a quick verification of the API server's availability: `curl http://127.0.0.1:3030/`
 
-
-### Publishing the image 
-
-```sh
-docker tag web-browsers iserter/web-browsers:latest
-```
-
-```sh 
-docker push iserter/web-browsers:latest
-```
-
-
-### Pulling from Ducker Hub
-```sh
-docker pull iserter/web-browsers:latest
-```
-
-
-### Running from Ducker Hub
-```sh 
-docker run -d -p 3030:3030 --name my-web-browsers iserter/web-browsers:latest
-```
