@@ -70,5 +70,5 @@ EXPOSE 3030
 
 # Start dbus and redis-server as root, but run the app as the 'app' user
 USER root
-ENV DBUS_SESSION_BUS_ADDRESS autolaunch:
+# ENV DBUS_SESSION_BUS_ADDRESS autolaunch:
 CMD service dbus start && service redis-server start && su - app -c "pm2-runtime start ecosystem.config.js"

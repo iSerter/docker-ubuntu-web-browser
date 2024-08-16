@@ -20,7 +20,7 @@ const startSession = ({ args = [], customConfig = {}, proxy = {} }) => {
       // chromePath = '/usr/bin/google-chrome';
 
       try {
-        var xvfbSession = new Xvfb({
+        xvfbSession = new Xvfb({
           silent: true,
           xvfb_args: ["-screen", "0", "1920x1080x24", "-ac"],
         });
@@ -43,8 +43,9 @@ const startSession = ({ args = [], customConfig = {}, proxy = {} }) => {
         "--no-first-run",
         "--no-sandbox",
         "--disable-setuid-sandbox",
+        "--disable-gpu",
         "--disable-blink-features=AutomationControlled",
-        "--disable-dev-shm-usage", // needed for switching some processes from memory to filesystem
+        "--disable-dev-shm-usage",
         "--ignore-certificate-errors",
         "--window-size=1920,1080",
       ].concat(args);

@@ -43,13 +43,13 @@ RUN apt-get update && apt-get install -y inotify-tools
 WORKDIR /app
 
 # Copy package.json and package-lock.json to the working directory
-COPY package*.json ./
+COPY ../../package.json ./
 
 # Install Node.js dependencies
-RUN npm install
+RUN npm install && npm cache clean --force
 
 # Copy the rest of the application code
-COPY . .
+COPY ../../ .
 
 # Expose the port your app runs on
 EXPOSE 3030

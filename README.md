@@ -33,7 +33,7 @@ docker exec -it my-web-browsers /bin/bash
 curl -X POST http://127.0.0.1:3030/browse -d '{"url": "https://iserter.com/"}'
 ```
 
-For a quick to verify that API server is running: `curl http://127.0.0.1:3030/`
+For a quick verification of the API server's availability: `curl http://127.0.0.1:3030/`
 
 
 ### Publishing the image 
